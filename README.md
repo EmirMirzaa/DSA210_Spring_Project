@@ -202,7 +202,7 @@ Time-based features (hour and day of week) had smaller but significant effects.
 
 Based on the analysis:
 
-### 1.For riders:
+### For riders:
    Consider traveling during off-peak hours (mid-morning or early afternoon) for faster and potentially cheaper trips.
 
    For short distances, walking or public transport might be more economical during peak hours.
@@ -211,7 +211,7 @@ Based on the analysis:
 
    Schedule weekend trips in advance to avoid evening surge pricing.
 
-### 2.For Uber:
+### For Uber:
    Implement dynamic pricing more aggressively during verified peak hours.
 
    Increase driver incentives during evening rush hours to reduce response times.
