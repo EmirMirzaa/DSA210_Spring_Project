@@ -2,15 +2,23 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import stats
 from datetime import datetime
 import pytz
+
+# Set style for better visualizations
+sns.set(style="whitegrid")
+plt.rcParams['figure.figsize'] = (12, 6)
 
 # Load the data
 df = pd.read_csv('trips_data-0.csv')
 
 # Initial exploration
+print("Initial Data Exploration:")
 print(df.head())
+print("\nData Info:")
 print(df.info())
+print("\nDescriptive Statistics:")
 print(df.describe())
 
 # Convert datetime columns to datetime objects
@@ -26,6 +34,7 @@ df['trip_duration'] = (df['dropoff_time'] - df['begin_trip_time']).dt.total_seco
 df['request_hour'] = df['request_time'].dt.hour
 df['request_day_of_week'] = df['request_time'].dt.dayofweek  # Monday=0, Sunday=6
 df['request_month'] = df['request_time'].dt.month
+df['request_day_name'] = df['request_time'].dt.day_name()
 
 # Clean fare amount - remove rows with fare_amount = 0 (except for canceled trips)
 df = df[(df['fare_amount'] > 0) | (df['status'] != 'completed')]
@@ -41,108 +50,171 @@ completed_trips['distance_bin'] = pd.cut(completed_trips['distance'],
                                        bins=[0, 2, 4, 6, 8, 10, 15, 20],
                                        labels=['0-2km', '2-4km', '4-6km', '6-8km', '8-10km', '10-15km', '15+km'])
 
-# Plot trip duration by hour for different distance bins
-plt.figure(figsize=(12, 6))
+# 1. Trip Duration Analysis
+plt.figure(figsize=(14, 7))
 sns.boxplot(x='request_hour', y='trip_duration', hue='distance_bin', 
-            data=completed_trips[completed_trips['distance_bin'].isin(['2-4km', '4-6km', '6-8km'])])
-plt.title('Trip Duration by Hour of Day for Similar Distance Trips')
-plt.xlabel('Hour of Day')
-plt.ylabel('Trip Duration (minutes)')
-plt.legend(title='Distance Bin')
+            data=completed_trips[completed_trips['distance_bin'].isin(['2-4km', '4-6km', '6-8km'])],
+            palette="viridis")
+plt.title('Trip Duration by Hour of Day for Similar Distance Trips', fontsize=16)
+plt.xlabel('Hour of Day', fontsize=14)
+plt.ylabel('Trip Duration (minutes)', fontsize=14)
+plt.legend(title='Distance Bin', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
 plt.show()
 
-# Scatter plot of distance vs fare
-plt.figure(figsize=(10, 6))
-sns.scatterplot(x='distance', y='fare_amount', data=completed_trips, alpha=0.5)
-plt.title('Relationship Between Trip Distance and Fare')
-plt.xlabel('Distance (km)')
-plt.ylabel('Fare Amount (TRY)')
+# 2. Distance vs Fare Analysis
+plt.figure(figsize=(12, 7))
+sns.scatterplot(x='distance', y='fare_amount', data=completed_trips, alpha=0.6, color='royalblue')
+plt.title('Relationship Between Trip Distance and Fare', fontsize=16)
+plt.xlabel('Distance (km)', fontsize=14)
+plt.ylabel('Fare Amount (TRY)', fontsize=14)
+
+# Add regression line
+sns.regplot(x='distance', y='fare_amount', data=completed_trips, scatter=False, color='red')
 plt.show()
 
 # Calculate correlation
 correlation = completed_trips['distance'].corr(completed_trips['fare_amount'])
-print(f"Correlation between distance and fare: {correlation:.2f}")
+print(f"\nCorrelation between distance and fare: {correlation:.2f}")
 
-# Average fare per km
+# 3. Pricing Analysis
 completed_trips['fare_per_km'] = completed_trips['fare_amount'] / completed_trips['distance']
-print(f"Average fare per km: {completed_trips['fare_per_km'].mean():.2f} TRY/km")
+avg_fare_per_km = completed_trips['fare_per_km'].mean()
+print(f"\nAverage fare per km: {avg_fare_per_km:.2f} TRY/km")
 
 # Average fare by hour
-plt.figure(figsize=(12, 6))
-sns.barplot(x='request_hour', y='fare_per_km', data=completed_trips)
-plt.title('Average Fare per km by Hour of Day')
-plt.xlabel('Hour of Day')
-plt.ylabel('Average Fare per km (TRY/km)')
+plt.figure(figsize=(14, 7))
+sns.barplot(x='request_hour', y='fare_per_km', data=completed_trips, 
+            palette="coolwarm", ci=None)
+plt.title('Average Fare per km by Hour of Day', fontsize=16)
+plt.xlabel('Hour of Day', fontsize=14)
+plt.ylabel('Average Fare per km (TRY/km)', fontsize=14)
+plt.axhline(avg_fare_per_km, color='red', linestyle='--', label='Overall Average')
+plt.legend()
 plt.show()
 
 # Average fare by day of week
-plt.figure(figsize=(10, 6))
-sns.barplot(x='request_day_of_week', y='fare_per_km', data=completed_trips)
-plt.title('Average Fare per km by Day of Week')
-plt.xlabel('Day of Week (0=Monday, 6=Sunday)')
-plt.ylabel('Average Fare per km (TRY/km)')
+plt.figure(figsize=(12, 7))
+day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+sns.barplot(x='request_day_name', y='fare_per_km', data=completed_trips, 
+            order=day_order, palette="Spectral", ci=None)
+plt.title('Average Fare per km by Day of Week', fontsize=16)
+plt.xlabel('Day of Week', fontsize=14)
+plt.ylabel('Average Fare per km (TRY/km)', fontsize=14)
+plt.axhline(avg_fare_per_km, color='red', linestyle='--', label='Overall Average')
+plt.legend()
+plt.xticks(rotation=45)
 plt.show()
 
-# Trip frequency by hour
-plt.figure(figsize=(12, 6))
-sns.countplot(x='request_hour', data=completed_trips)
-plt.title('Trip Frequency by Hour of Day')
-plt.xlabel('Hour of Day')
-plt.ylabel('Number of Trips')
+# 4. Trip Frequency Analysis
+# By hour
+plt.figure(figsize=(14, 7))
+sns.countplot(x='request_hour', data=completed_trips, palette="Blues_r")
+plt.title('Trip Frequency by Hour of Day', fontsize=16)
+plt.xlabel('Hour of Day', fontsize=14)
+plt.ylabel('Number of Trips', fontsize=14)
 plt.show()
 
-# Trip frequency by day of week
-plt.figure(figsize=(10, 6))
-sns.countplot(x='request_day_of_week', data=completed_trips)
-plt.title('Trip Frequency by Day of Week')
-plt.xlabel('Day of Week (0=Monday, 6=Sunday)')
-plt.ylabel('Number of Trips')
+# By day of week
+plt.figure(figsize=(12, 7))
+sns.countplot(x='request_day_name', data=completed_trips, order=day_order, palette="Greens_r")
+plt.title('Trip Frequency by Day of Week', fontsize=16)
+plt.xlabel('Day of Week', fontsize=14)
+plt.ylabel('Number of Trips', fontsize=14)
+plt.xticks(rotation=45)
 plt.show()
 
-# Calculate driver response time (time between request and trip start)
+# 5. Driver Response Time Analysis
 df['response_time'] = (df['begin_trip_time'] - df['request_time']).dt.total_seconds() / 60  # in minutes
 
 # Plot response time by hour
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(14, 7))
 sns.boxplot(x='request_hour', y='response_time', 
-            data=df[(df['status'] == 'completed') & (df['response_time'] < 30)])  # filter outliers
-plt.title('Driver Response Time by Hour of Day')
-plt.xlabel('Hour of Day')
-plt.ylabel('Response Time (minutes)')
+            data=df[(df['status'] == 'completed') & (df['response_time'] < 30)],  # filter outliers
+            palette="magma")
+plt.title('Driver Response Time by Hour of Day', fontsize=16)
+plt.xlabel('Hour of Day', fontsize=14)
+plt.ylabel('Response Time (minutes)', fontsize=14)
 plt.show()
 
-from scipy import stats
+# 6. Statistical Hypothesis Testing
+print("\nSTATISTICAL HYPOTHESIS TESTING RESULTS:")
 
-# Define peak and off-peak hours
+# Test 1: Peak vs Off-Peak Fares
 completed_trips['is_peak'] = completed_trips['request_hour'].isin([8, 9, 10, 17, 18, 19])
-
-# Compare fares
 peak_fares = completed_trips[completed_trips['is_peak']]['fare_per_km']
 off_peak_fares = completed_trips[~completed_trips['is_peak']]['fare_per_km']
 
-# T-test
 t_stat, p_value = stats.ttest_ind(peak_fares, off_peak_fares, equal_var=False)
-print(f"T-test for fare difference between peak and off-peak hours:")
+print("\n1. Fare Difference Between Peak and Off-Peak Hours:")
+print(f"Peak hours fare/km mean: {peak_fares.mean():.2f} TRY")
+print(f"Off-peak hours fare/km mean: {off_peak_fares.mean():.2f} TRY")
 print(f"T-statistic: {t_stat:.2f}, P-value: {p_value:.4f}")
+print("Conclusion:", "Reject null hypothesis - significant difference exists." if p_value < 0.05 else "Fail to reject null hypothesis - no significant difference.")
 
-if p_value < 0.05:
-    print("Reject null hypothesis - there is a significant difference in fares between peak and off-peak hours.")
-else:
-    print("Fail to reject null hypothesis - no significant difference in fares between peak and off-peak hours.")
-
-# Define weekends (Saturday=5, Sunday=6)
+# Test 2: Weekday vs Weekend Durations
 completed_trips['is_weekend'] = completed_trips['request_day_of_week'].isin([5, 6])
-
-# Compare durations
 weekend_durations = completed_trips[completed_trips['is_weekend']]['trip_duration']
 weekday_durations = completed_trips[~completed_trips['is_weekend']]['trip_duration']
 
-# T-test
 t_stat, p_value = stats.ttest_ind(weekend_durations, weekday_durations, equal_var=False)
-print(f"\nT-test for duration difference between weekends and weekdays:")
+print("\n2. Duration Difference Between Weekends and Weekdays:")
+print(f"Weekend duration mean: {weekend_durations.mean():.2f} minutes")
+print(f"Weekday duration mean: {weekday_durations.mean():.2f} minutes")
 print(f"T-statistic: {t_stat:.2f}, P-value: {p_value:.4f}")
+print("Conclusion:", "Reject null hypothesis - significant difference exists." if p_value < 0.05 else "Fail to reject null hypothesis - no significant difference.")
 
-if p_value < 0.05:
-    print("Reject null hypothesis - there is a significant difference in trip durations between weekends and weekdays.")
-else:
-    print("Fail to reject null hypothesis - no significant difference in trip durations between weekends and weekdays.")
+# Test 3: Weekday vs Weekend Distance
+weekend_dist = completed_trips[completed_trips['is_weekend']]['distance']
+weekday_dist = completed_trips[~completed_trips['is_weekend']]['distance']
+
+t_stat, p_value = stats.ttest_ind(weekend_dist, weekday_dist, equal_var=False)
+print("\n3. Distance Difference Between Weekends and Weekdays:")
+print(f"Weekend distance mean: {weekend_dist.mean():.2f} km")
+print(f"Weekday distance mean: {weekday_dist.mean():.2f} km")
+print(f"T-statistic: {t_stat:.2f}, P-value: {p_value:.4f}")
+print("Conclusion:", "Reject null hypothesis - significant difference exists." if p_value < 0.05 else "Fail to reject null hypothesis - no significant difference.")
+
+# Test 4: Correlation between hour of day and response time
+response_corr, response_p = stats.pearsonr(
+    df[(df['status'] == 'completed') & (df['response_time'] < 30)]['request_hour'],
+    df[(df['status'] == 'completed') & (df['response_time'] < 30)]['response_time']
+)
+print("\n4. Correlation Between Hour of Day and Response Time:")
+print(f"Pearson correlation coefficient: {response_corr:.2f}")
+print(f"P-value: {response_p:.4f}")
+print("Conclusion:", "Significant correlation exists." if response_p < 0.05 else "No significant correlation found.")
+
+# 7. Additional Visualizations
+# Distance distribution comparison
+plt.figure(figsize=(12, 7))
+sns.boxplot(x='is_weekend', y='distance', data=completed_trips, palette="pastel")
+plt.title('Trip Distance Distribution: Weekends vs Weekdays', fontsize=16)
+plt.xlabel('Is Weekend?', fontsize=14)
+plt.ylabel('Distance (km)', fontsize=14)
+plt.xticks([0, 1], ['Weekday', 'Weekend'])
+plt.show()
+
+# Response time trend
+plt.figure(figsize=(14, 7))
+response_by_hour = df[(df['status'] == 'completed') & (df['response_time'] < 30)].groupby('request_hour')['response_time'].mean()
+sns.lineplot(x=response_by_hour.index, y=response_by_hour.values, marker='o', color='purple')
+plt.title('Average Driver Response Time Trend Throughout the Day', fontsize=16)
+plt.xlabel('Hour of Day', fontsize=14)
+plt.ylabel('Average Response Time (minutes)', fontsize=14)
+plt.axhline(df['response_time'].mean(), color='red', linestyle='--', label='Overall Average')
+plt.legend()
+plt.show()
+
+# 8. Cancellation Analysis (if cancellation data exists)
+if 'status' in df.columns and 'canceled' in df['status'].unique():
+    cancellation_rate = df[df['status'] == 'canceled'].shape[0] / df.shape[0]
+    print(f"\nCancellation Rate: {cancellation_rate:.2%}")
+    
+    # Cancellation by hour
+    plt.figure(figsize=(14, 7))
+    sns.countplot(x='request_hour', hue='status', data=df, palette="Reds")
+    plt.title('Trip Status by Hour of Day', fontsize=16)
+    plt.xlabel('Hour of Day', fontsize=14)
+    plt.ylabel('Count', fontsize=14)
+    plt.show()
