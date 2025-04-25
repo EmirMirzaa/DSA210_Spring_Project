@@ -77,8 +77,12 @@ As mentioned before, the data used in this project was obtained directly from Ub
 ### Trip Duration by Hour and Distance
 To understand how time of day affects trip duration, especially for similar distances, we used a boxplot to compare trip durations by request_hour, segmented into distance bins (2-4km, 4-6km, 6-8km). This helped reveal patterns such as longer durations during peak traffic hours.
 
+![indir (6)](https://github.com/user-attachments/assets/37eea791-3e97-4674-a593-9cacfe9da756)
+
 ### Distance vs Fare
 A scatter plot visualized the relationship between trip distance and fare_amount, showing a strong positive correlation. A correlation coefficient was also computed, confirming that longer distances generally lead to higher fares.
+
+![indir (7)](https://github.com/user-attachments/assets/6d04c839-7327-4248-9622-a04aedadb38f)
 
 ### Fare per Kilometer Analysis
 A new feature fare_per_km was created to analyze pricing efficiency. We calculated:
@@ -86,6 +90,10 @@ A new feature fare_per_km was created to analyze pricing efficiency. We calculat
 The average fare per kilometer across all completed trips.
 
 Bar plots showing how this metric varies by hour of the day and day of the week, identifying potential pricing irregularities or surge pricing trends.
+
+![indir (8)](https://github.com/user-attachments/assets/ea4d75fe-3f91-4f0d-ba00-6c8f867853b0)
+
+![indir (9)](https://github.com/user-attachments/assets/967d9f71-aec5-406f-970d-d4623f8c372d)
 
 ### Trip Frequency Analysis
 We used count plots to visualize the number of completed trips by:
@@ -96,17 +104,14 @@ Day of week
 
 These plots helped uncover demand patterns, such as higher ride requests during rush hours or weekends.
 
+![indir (10)](https://github.com/user-attachments/assets/c87225c4-ad8b-4370-b5e2-af1fbb2ebdde)
+
+![indir (11)](https://github.com/user-attachments/assets/21597bb9-f201-4d2b-8722-1ec4e888f15d)
+
 ### Driver Response Time
 We calculated the time between request_time and begin_trip_time to measure driver response time (in minutes). A boxplot by hour of day was used to visualize how quickly drivers respond at different times, filtering out extreme outliers for clarity.
 
-![indir (6)](https://github.com/user-attachments/assets/37eea791-3e97-4674-a593-9cacfe9da756)
-![indir (7)](https://github.com/user-attachments/assets/6d04c839-7327-4248-9622-a04aedadb38f)
-![indir (8)](https://github.com/user-attachments/assets/ea4d75fe-3f91-4f0d-ba00-6c8f867853b0)
-![indir (9)](https://github.com/user-attachments/assets/967d9f71-aec5-406f-970d-d4623f8c372d)
-![indir (10)](https://github.com/user-attachments/assets/c87225c4-ad8b-4370-b5e2-af1fbb2ebdde)
-![indir (11)](https://github.com/user-attachments/assets/21597bb9-f201-4d2b-8722-1ec4e888f15d)
 ![indir (12)](https://github.com/user-attachments/assets/dd5a68c3-c5aa-4c84-b662-9a25b50ce03a)
-
 
 ## Statistical Testing
 
