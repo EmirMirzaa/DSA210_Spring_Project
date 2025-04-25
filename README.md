@@ -115,7 +115,7 @@ We calculated the time between request_time and begin_trip_time to measure drive
 
 ## Statistical Testing
 
-### 1. Fare Differences Between Peak and Off-Peak Hours
+### 1. Hypothesis: Fare Differences Between Peak and Off-Peak Hours
 Test: Independent two-sample t-test
 
 Key Results:
@@ -129,7 +129,7 @@ T-statistic: -5.25 (p-value: 0.0001)
 Conclusion:
 Significant price surge during peak hours (likely due to demand-based pricing).
 
-### 2. Trip Duration Differences Between Weekdays and Weekends
+### 2. Hypothesis: Trip Duration Differences Between Weekdays and Weekends
 
 ![indir (13)](https://github.com/user-attachments/assets/74972c65-88ea-4ff5-93a5-f406f55bcbe5)
 
