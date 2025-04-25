@@ -99,39 +99,60 @@ These plots helped uncover demand patterns, such as higher ride requests during 
 ### Driver Response Time
 We calculated the time between request_time and begin_trip_time to measure driver response time (in minutes). A boxplot by hour of day was used to visualize how quickly drivers respond at different times, filtering out extreme outliers for clarity.
 
-![download](https://github.com/user-attachments/assets/3e3b5dde-9ba0-4c5f-b366-13248a6cb3c8)
+![indir (6)](https://github.com/user-attachments/assets/37eea791-3e97-4674-a593-9cacfe9da756)
+![indir (7)](https://github.com/user-attachments/assets/6d04c839-7327-4248-9622-a04aedadb38f)
+![indir (8)](https://github.com/user-attachments/assets/ea4d75fe-3f91-4f0d-ba00-6c8f867853b0)
+![indir (9)](https://github.com/user-attachments/assets/967d9f71-aec5-406f-970d-d4623f8c372d)
+![indir (10)](https://github.com/user-attachments/assets/c87225c4-ad8b-4370-b5e2-af1fbb2ebdde)
+![indir (11)](https://github.com/user-attachments/assets/21597bb9-f201-4d2b-8722-1ec4e888f15d)
+![indir (12)](https://github.com/user-attachments/assets/dd5a68c3-c5aa-4c84-b662-9a25b50ce03a)
 
-![indir](https://github.com/user-attachments/assets/4379b2b9-ee42-4440-973b-4a966fe11d70)
-
-![indir (1)](https://github.com/user-attachments/assets/f648b79a-541a-47fd-b2f4-6c5ff6fa9030)
-
-![indir (2)](https://github.com/user-attachments/assets/1863e4fa-1d54-4d63-9f11-22c08bbeb6a1)
-
-![indir (3)](https://github.com/user-attachments/assets/9e848771-5019-49a3-85f6-ffcd49e43157)
-
-![indir (4)](https://github.com/user-attachments/assets/72bef7fe-10a3-47c5-b51f-a9c2ee63403a)
-
-![indir (5)](https://github.com/user-attachments/assets/0941496b-2e49-4850-a72a-795992ea0b56)
 
 ## Statistical Testing
 
 ### 1. Fare Differences Between Peak and Off-Peak Hours
-We defined peak hours as 8–10 AM and 5–7 PM, and compared the fare per kilometer between peak and off-peak hours using a T-test.
+Test: Independent two-sample t-test
 
-T-statistic: -5.25
+Key Results:
 
-P-value: 0.0001 (less than 0.05)
+Peak hours (8-10am, 5-7pm) average fare/km: 8.50 TRY
 
-Insight: Since the p-value is significant (below 0.05), we reject the null hypothesis and conclude that there is a statistically significant difference in fares between peak and off-peak hours. This suggests surge pricing or increased demand during rush hours.
+Off-peak hours average fare/km: 6.80 TRY
+
+T-statistic: -5.25 (p-value: 0.0001)
+
+Conclusion:
+Significant price surge during peak hours (likely due to demand-based pricing).
 
 ### 2. Trip Duration Differences Between Weekdays and Weekends
-We compared trip durations between weekdays and weekends using another T-test.
 
-T-statistic: 1.45
+![indir (13)](https://github.com/user-attachments/assets/74972c65-88ea-4ff5-93a5-f406f55bcbe5)
 
-P-value: 0.147 (greater than 0.05)
+Test: Independent two-sample t-test
 
-Insight: Since the p-value is not significant (greater than 0.05), we fail to reject the null hypothesis, indicating that there is no significant difference in trip durations between weekdays and weekends.
+Key Results:
+
+Weekday average duration: 18.2 mins
+
+Weekend average duration: 17.8 mins
+
+T-statistic: 1.45 (p-value: 0.147)
+
+Conclusion:
+No significant duration difference, suggesting consistent traffic conditions.
+
+### 3. Hypothesis: Driver response times are correlated with time of day
+
+![indir (14)](https://github.com/user-attachments/assets/20b919ff-f16c-40a9-b58f-032fc4257d5e)
+
+Test: Pearson correlation
+
+Key Results:
+
+Correlation coefficient: 0.42 (p-value: 0.013)
+
+Conclusion:
+Moderate positive correlation – response times worsen progressively throughout the day (fastest at 4-6am, slowest at 5-7pm).
 
 ## Summary of Findings
 Based on the analysis:
@@ -181,9 +202,17 @@ Based on the analysis:
 
    For short distances, walking or public transport might be more economical during peak hours.
 
+   Prefer off-peak hours (10am–4pm) for 20%+ cost savings.
+
+   Schedule weekend trips in advance to avoid evening surge pricing.
+
 ### 2.For Uber:
    Implement dynamic pricing more aggressively during verified peak hours.
 
    Increase driver incentives during evening rush hours to reduce response times.
 
    Consider special weekend pricing or promotions since demand patterns differ.
+   
+   Incentivize drivers for 5-7pm shifts to reduce response times.
+   
+   Implement weekend distance-tiered pricing (longer trips are more frequent).
