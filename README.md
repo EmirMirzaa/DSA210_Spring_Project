@@ -14,7 +14,7 @@ In this project, the dataset is going to used was obtained directly from Uber's 
  Additional external data was incorporated to enhance the analysis:
    - LPG fuel prices were manually collected from public fuel price tracking platform EPDK and integrated based on approximate dates.
    - Date parsing enabled the extraction of request hour, weekday, and month for time-based trend analysis.
-All of the processing, cleaning, and enrichment of these datas were performed by using the Pandas and Datetime libraries in Python.
+All of the processing, cleaning, and enrichment of this data were performed by using the Pandas and Datetime libraries in Python.
 
 ### Research Questions
 The following important questions will be addressed by the project:
@@ -256,7 +256,7 @@ Based on the analysis:
 
    Implement fare models that dynamically adjust not only for time-based demand but also for fuel price levels, especially during periods of sustained high LPG costs.
 
-##Fuel Sensivity Insight
+## Fuel Sensitivity Insight
 
  Exploratory and predictive modeling consistently revealed that fuel prices, particularly LPG (Otogaz), play a critical role in determining both fare levels and trip profitability. While demand-based surge pricing creates short-term fluctuations, fuel prices establish a more stable long-term cost-pressure on Uber’s pricing algorithm.
 
@@ -271,8 +271,10 @@ These results suggest that fuel-aware pricing strategies and driver fuel compens
 ## Machine Learning Analysis
  To enhance the depth of this analysis, machine learning techniques were applied to build predictive models and gain further insights into ride fare dynamics and profitability.
 
-###1.Fare Prediction Model (Linear Regression with LPG Prices)
+### 1.Fare Prediction Model (Linear Regression with LPG Prices)
+
 A multiple linear regression model was developed to predict Uber fares using the following input features:
+
  distance (in kilometers)
  request_hour
  is_peak (binary)
@@ -282,29 +284,33 @@ A multiple linear regression model was developed to predict Uber fares using the
  R² Score: 0.841
  Root Mean Square Error (RMSE): 39.46 TRY
  Most influential features:
- Otogaz: 77.15
+ Gas: 77.15
  distance: 71.02
  request_hour: -4.36
+ 
 Among all predictors, LPG price had the highest coefficient (77.15), confirming that fuel costs are a primary driver of fare calculation.
    
-###2.Profit Margin Prediction (Random Forest Regressor)
+### 2.Profit Margin Prediction (Random Forest Regressor)
+
  Using a Random Forest model, profit margins per trip were predicted using similar features. This model captures nonlinear relationships and interactions between variables.
-Results:
+ 
+### Results:
  R² Score: 0.844
  RMSE: 37.23 TRY
  Top Features (by importance):
  Otogaz: 50.4%
  distance: 46.5%
  Others: < 3%
+ 
 Random Forest feature importances showed that LPG price accounted for over 50% of predictive power, surpassing even distance.”
 
-###3.Cluster Analysis
+### 3.Cluster Analysis
  K-Means clustering was performed to segment trips based on distance, fare, fuel cost, and profit margin. Three distinct clusters emerged:
 
-Cluster	Avg. Distance (km)	Avg. Fare (TRY)	Avg. Fuel Cost	Avg. Profit Margin
-     0	       5.55	                172.01	         10.34	         161.68
-     1	       1.70	                116.89	         3.68	          113.21
-     2	       6.05	                321.06	         15.71	         305.34
+ Cluster	Avg. Distance (km)	Avg. Fare (TRY)	Avg. Fuel Cost	Avg. Profit Margin
+     0	            5.55	              172.01	         10.34	        161.68
+     1	            1.70	              116.89	         3.68	         113.21
+     2	            6.05	              321.06	         15.71	        305.34
 
 ![a10](https://github.com/user-attachments/assets/571a2714-71c1-466d-b8d7-c744e2c427c8)
 
@@ -315,16 +321,17 @@ These clusters represent:
  Medium-range typical trips (Cluster 0)
  Long premium-priced trips (Cluster 2)
 
-###4.Break-even and Profitability Analysis
+### 4.Break-even and Profitability Analysis
  Average fare per km: 57.66 TRY
  Estimated cost per km (fuel): 2.30 TRY
  Gross margin per km: 55.36 TRY
  Average profit per trip: 189.98 TRY
+ 
 When LPG prices exceed 25.68 TRY, average profit margins drop by 28.5%, showing a clear sensitivity to fuel costs.
 
 ![a14](https://github.com/user-attachments/assets/27eb2c17-3de0-450f-af65-15d7272540b7)
 
-###5.Peak Hour Classification (Binary Classification)
+### 5.Peak Hour Classification (Binary Classification)
  A classification model was built to identify whether a trip occurred during peak hours (8–10am or 5–7pm). Features included distance, request_hour, and is_weekend.
 Model Performance:
  Accuracy: 100%
@@ -335,7 +342,23 @@ Model Performance:
  is_weekend: 1.2%
 This demonstrates that time of request is a highly reliable indicator of peak-hour classification.
 
-###Recommendations Based on ML Results
+### Recommendations Based on ML Results
  For Uber: Consider dynamic fare adjustments not only by time but also indexed directly to LPG prices.
  For Riders: Use fare prediction tools to estimate trip costs — avoid long trips during high fuel price periods.
  For Strategic Planning: Monitor fuel trends to anticipate profitability changes and adjust incentives dynamically.
+
+# Conclusion 
+
+This project provided a comprehensive understanding of Uber ride behavior by analyzing trip-level data and integrating external LPG fuel prices. Through exploratory analysis, hypothesis testing, and machine learning, several important findings emerged:
+
+Trip duration is heavily influenced by time of day, especially during morning and evening rush hours.
+
+Distance remains the strongest predictor of fare, yet fuel prices (LPG) have a measurable and growing impact.
+
+Profit margins are sensitive to LPG fluctuations, highlighting the need for fuel-aware pricing strategies.
+
+Peak-hour classification and clustering techniques offer clear segmentation opportunities for better pricing and driver deployment.
+
+From a business perspective, these insights can help Uber optimize pricing models, anticipate demand surges, and mitigate fuel-related risks. For users, the findings encourage strategic trip planning to avoid costly peak periods.
+
+Overall, this project enhanced my skills in data wrangling, statistical testing, and predictive modeling—especially in applying real-world cost variables like fuel price into machine learning pipelines. In future versions, I would expand the dataset and incorporate weather or traffic data for even deeper analysis.
